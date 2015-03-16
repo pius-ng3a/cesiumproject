@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Use correct character set. -->
+    <meta charset="utf-8">
+    <!-- Tell IE to use the latest, best version (or Chrome Frame if pre-IE11). -->
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <title>Castle on Water Terrain</title>
+    <script src="../Build/Cesium/Cesium.js"></script>
+    <style>
+        @import url(../Build/Cesium/Widgets/widgets.css);
+
+        @import url(Sandcastle/templates/bucket.css);
+
+        html, body, #cesiumContainer {
+            width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+        }
+    </style>
+
+
+
+
+</head>
+<body>
+
+<!-- To add the flght script.
+<div id="cesiumContainer" class="fullSize"></div>
+<div id="loadingOverlay"><h1>Loading...</h1></div>
+<div id="toolbar"></div>
+-->
+
+
+<div id="cesiumContainer"></div>
+<script>
+     var viewer = new Cesium.Viewer('cesiumContainer');
+                 /*infoBox : false,
+                 selectionIndicator : false
+
+     });*/
+     //add a terrain on the globe with water effects
+    var terrainProvider = new Cesium.CesiumTerrainProvider({
+         url : '//assets.agi.com/stk-terrain/world',
+         requestWaterMask: true
+     });
+     viewer.terrainProvider = terrainProvider;
+
+     var layers = viewer.scene.imageryLayers;
+     var blackMarble = layers.addImageryProvider(new Cesium.TileMapServiceImageryProvider({
+         url : '//cesiumjs.org/tilesets/imagery/blackmarble',
+         maximumLevel : 8,
+         credit : 'Black Marble imagery courtesy NASA Earth Observatory'
+     }))
+     blackMarble.alpha = 0.5; // 0.0 is transparent.  1.0 is opaque.
+     blackMarble.brightness = 4.0; // < 1.0 reduces brightness , >1.0 increases brightness.
+
+
+     layers.addImageryProvider(new Cesium.SingleTileImageryProvider({
+         url : 'Sandcastle/images/Cesium_Logo_overlay.png' ,
+         rectangle : Cesium.Rectangle.fromDegrees(-80.0, 28.0, -67.0, 29.75)
+     }));
+
+     var scene = viewer.scene;
+     var modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
+             Cesium.Cartesian3.fromDegrees(-75.62898254394531, 40.02804946899414, 0.0));
+     var model = scene.primitives.add(Cesium.Model.fromGltf({
+         url : 'SampleData/models/CesiumAir/Cesium_Air.gltf',
+         modelMatrix : modelMatrix,
+         scale : 200.0
+     }));
+    // This line allows one use an inspector on the map.
+     viewer.extend(Cesium.viewerCesiumInspectorMixin);
+</script>
+
+
+     //buid a shape on the water
+
+     /* HOW TO INCLUDE AN ANIMATION CLOCK IN YOUR PROJECT
+      * // In HTML head, include a link to Animation.css stylesheet,
+      // and in the body, include: <div id="animationContainer"></div>
+
+      var clock = new Cesium.Clock();
+      var clockViewModel = new Cesium.ClockViewModel(clock);
+      var viewModel = new Cesium.AnimationViewModel(clockViewModel);
+      var widget = new Cesium.Animation('animationContainer', viewModel);
+
+      function tick() {
+      clock.tick();
+      Cesium.requestAnimationFrame(tick);
+      }
+      Cesium.requestAnimationFrame(tick);
+      */
+
+
+</body>
+</html>
